@@ -3,7 +3,12 @@ import ConversationService from "../../../services/conversation/ConversationServ
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConversations } from "../../../services/conversation/ConversationSlice";
 
-const SendMessageForm = ({ recieverId, conversationId }) => {
+const SendMessageForm = ({
+  recieverId,
+  recieverName,
+  conversationId,
+  setSelectedConversation,
+}) => {
   const [message, setMessage] = useState("");
   const dispatch = useDispatch();
   const userSliceStore = useSelector((state) => state);
@@ -16,11 +21,20 @@ const SendMessageForm = ({ recieverId, conversationId }) => {
       recieverId,
       conversationId
     );
+    console.log("Message", result);
     setMessage("");
+    if (conversationId == "") {
+      setSelectedConversation({
+        conversationId: result.conversationId,
+        reciever: { id: result.recieverId, name: recieverName },
+        chatMessages: [],
+        lastMessagedOn: result.sendDateTime,
+      });
+    }
     dispatch(fetchConversations(user.id));
-    console.log(result);
+    // console.log(result);
     if (result) {
-      console.log("success");
+      // console.log("success");
     }
   };
   return (

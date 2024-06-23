@@ -11,7 +11,7 @@ export const fetchConversations = createAsyncThunk(
   async (userId) => {
     try {
       const response = await ConversationService.getUserConversations(userId);
-      console.log("response", response);
+      // console.log("response", response);
       return response;
     } catch (error) {
       return;
@@ -26,7 +26,7 @@ export const fetchConversation = createAsyncThunk(
       const response = await ConversationService.getConversationById(
         conversationId
       );
-      console.log("response", response);
+      // console.log("response", response);
       return response;
     } catch (error) {
       return;
@@ -44,7 +44,7 @@ export const ConversationSlice = createSlice({
       state.isError = false;
     }),
       builder.addCase(fetchConversations.fulfilled, (state, action) => {
-        console.log("action.payload", action.payload);
+        // console.log("action.payload", action.payload);
         if (action.payload) {
           state.conversations = action.payload;
         } else {
@@ -61,7 +61,7 @@ export const ConversationSlice = createSlice({
   reducers: {
     // login
     addMessage: (state, action) => {
-      console.log("Slice called");
+      // console.log("Slice called");
     },
     // logout
     logoutUser: (state, action) => {

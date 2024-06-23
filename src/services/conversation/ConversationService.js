@@ -58,7 +58,7 @@ const createNewMessage = async (
   conversationId
 ) => {
   const url = BASE_URL + ADD_NEW_MESSAGE_URL;
-  console.log(url);
+  // console.log(url);
   //connect api
   const response = await fetch(url, {
     method: "POST",
@@ -72,7 +72,7 @@ const createNewMessage = async (
       ConversationId: conversationId,
     }),
   });
-  console.log(response);
+  // console.log(response);
   if (response.status != 200) {
     return null;
   }

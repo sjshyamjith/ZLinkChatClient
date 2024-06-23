@@ -19,11 +19,11 @@ function LoginPage() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log("Loging in...");
+    // console.log("Loging in...");
     const result = await UserServices.login(email, password);
-    console.log(result);
+    // console.log(result);
     if (result) {
-      console.log("Login success");
+      // console.log("Login success");
       // local storage
       setLsEmail(email);
       setLsPassword(password);

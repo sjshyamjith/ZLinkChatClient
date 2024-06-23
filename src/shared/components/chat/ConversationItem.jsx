@@ -1,7 +1,7 @@
 import React from "react";
 
 function ConversationItem({ reciever }) {
-  console.log(reciever);
+  // console.log(reciever);
   return (
     <div className="rounded-xl bg-white p-2 flex cursor-pointer mb-3">
       <div className="w-1/6 flex">

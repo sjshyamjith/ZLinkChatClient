@@ -13,14 +13,14 @@ export const UserSlice = createSlice({
   reducers: {
     // login
     loginUser: (state, action) => {
-      console.log("Slice called");
+      // console.log("Slice called");
       const _user = {
         id: action.payload.id,
         name: action.payload.name,
         email: action.payload.email,
         token: action.payload.token,
       };
-      console.log(_user);
+      // console.log(_user);
       state.user = _user;
     },
     // logout

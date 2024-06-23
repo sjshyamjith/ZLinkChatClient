@@ -1,6 +1,6 @@
 const stringToFormattedDate = (datetimeString) => {
   const _datetime = new Date(datetimeString);
-  console.log(_datetime);
+  // console.log(_datetime);
   return _datetime;
 };
 const isExactlyLimitHoursDifference = (datetimeString, limit) => {

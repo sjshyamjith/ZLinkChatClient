@@ -26,8 +26,8 @@ function RegisterPage() {
     }
     const result = await UserServices.register(fullName, email, password);
     if (result) {
-      console.log("Registered");
-      console.log(result);
+      // console.log("Registered");
+      // console.log(result);
       // local storage
       setLsEmail(email);
       setLsPassword(password);

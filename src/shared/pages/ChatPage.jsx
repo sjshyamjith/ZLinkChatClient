@@ -5,6 +5,9 @@ import ConversationBox from "../components/chat/ConversationBox";
 import { useDispatch, useSelector } from "react-redux";
 import UserService from "../../services/user/UserService";
 import { fetchConversations } from "../../services/conversation/ConversationSlice";
+import RecieverChatBoxCard from "../components/user/RecieverChatBoxCard";
+import MessagesArea from "../components/chat/MessagesArea";
+import SendMessageForm from "../components/chat/SendMessageForm";
 
 function ChatPage() {
   const dispatch = useDispatch();
@@ -14,8 +17,9 @@ function ChatPage() {
   const conversations = conversationSliceStore.ConversationSlice.conversations;
   const [appUsers, setAppUsers] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
-  console.log("conv", conversations);
-  console.log("chatpage", selectedConversation);
+  const [loadedConversation, setLoadedConversation] = useState(null);
+  // console.log("conv", conversations);
+  // console.log("chatpage", selectedConversation);
   useEffect(() => {
     const getAllUsers = async () => {
       const _data = await UserService.allUsers(user.id);
@@ -24,6 +28,22 @@ function ChatPage() {
     getAllUsers();
     dispatch(fetchConversations(user.id));
   }, []);
+
+  useEffect(() => {
+    dispatch(fetchConversations(user.id));
+    // console.log("useeffect called");
+    if (selectedConversation != null) {
+      if (selectedConversation.conversationId != "") {
+        const new_conv = conversations.find(
+          (c) => c.conversationId == selectedConversation.conversationId
+        );
+        setTimeout(() => {
+          setSelectedConversation(new_conv);
+        }, 1000);
+      }
+    }
+  }, [selectedConversation]);
+  // console.log("selectedConversation", selectedConversation);
 
   return (
     <div className="bg-slate-100 rounded-xl p-2 w-full lg:w-3/4 m-auto">
@@ -43,9 +63,10 @@ function ChatPage() {
                   <div>
                     <h3 className="mb-3">Recent Chats</h3>
                     {conversations.map((item, index) => {
-                      console.log("conversation", item);
+                      // console.log("conversation", item);
                       return (
                         <div
+                          key={item.conversationId}
                           className="cursor-pointer"
                           onClick={() => {
                             setSelectedConversation(item);
@@ -64,10 +85,11 @@ function ChatPage() {
                     appUsers.map((item, index) => {
                       return (
                         <div
+                          key={item.recieverId}
                           className="cursor-pointer"
                           onClick={() => {
                             setSelectedConversation({
-                              conversationId: null,
+                              conversationId: "",
                               chatMessages: [],
                               lastMessagedOn: null,
                               reciever: {
@@ -95,14 +117,28 @@ function ChatPage() {
           {/* Right Side */}
           <div className="w-3/5 h-[500px] bg-[url('/chat_bg.jpg')]">
             {selectedConversation != null && (
-              <ConversationBox
-                conversation={
-                  conversations.find(
-                    (c) =>
-                      c.conversationId == selectedConversation.conversationId
-                  ) ?? selectedConversation
-                }
-              />
+              <div>
+                <div className="h-[65px]">
+                  <RecieverChatBoxCard
+                    recieverId={selectedConversation.reciever.id}
+                    name={selectedConversation.reciever.name}
+                  />
+                </div>
+                {/* Chat area */}
+                <div className="h-[375px]">
+                  <MessagesArea messages={selectedConversation.chatMessages} />
+                </div>
+                {/* Submission area */}
+                <div className="h-60px mt-2">
+                  <SendMessageForm
+                    recieverName={selectedConversation.reciever.name}
+                    setSelectedConversation={setSelectedConversation}
+                    recieverId={selectedConversation.reciever.id}
+                    conversationId={selectedConversation.conversationId}
+                  />
+                </div>
+                {/* Chat area */}
+              </div>
             )}
           </div>
           {/* Right Side */}

@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateLayout = () => {
   // const loggedUser = getUserInfoFromLocalStorage();
-  // console.log(loggedUser);
+  // // console.log(loggedUser);
   // if (!loggedUser) {
   //   return <Navigate to={"/forbidden"} />;
   // }
