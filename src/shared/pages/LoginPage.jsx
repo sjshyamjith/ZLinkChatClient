@@ -1,18 +1,42 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import UserServices from "../../services/UserService";
+import UserServices from "../../services/user/UserService";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../services/user/UserSlice";
+import zLocalStorage from "../../services/custom_hooks/useLocalStorage";
 
 function LoginPage() {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const onSubmit = (e) => {
+  const [lsEmail, setLsEmail, removeLsEmail] = zLocalStorage("user_email", "");
+  const [lsPassword, setLsPassword, removeLsPassword] = zLocalStorage(
+    "user_password",
+    ""
+  );
+
+  const onSubmit = async (e) => {
     e.preventDefault();
     console.log("Loging in...");
-    const result = UserServices.login(email, password);
+    const result = await UserServices.login(email, password);
+    console.log(result);
     if (result) {
       console.log("Login success");
+      // local storage
+      setLsEmail(email);
+      setLsPassword(password);
+
+      // redux store
+      dispatch(
+        loginUser({
+          id: result.id,
+          name: result.name,
+          email: result.email,
+          token: result.token,
+        })
+      );
       navigate("/chat", { replace: true });
     }
     setError("User login failed.");

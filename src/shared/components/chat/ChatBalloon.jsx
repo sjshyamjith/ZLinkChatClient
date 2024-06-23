@@ -29,7 +29,7 @@ const ChatBalloon = ({
       onMouseLeave={handleMouseLeave}
     >
       <div
-        className={`max-w-[75%] min-w-[30%] ${
+        className={`max-w-[75%] min-w-[40%] ${
           isMyMessage ? "bg-slate-400" : "bg-orange-400"
         } text-white p-2 rounded-lg ${
           isMyMessage ? "float-end" : "float-start"

@@ -1,10 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ConversationItem from "../components/chat/ConversationItem";
 import UserChatBoxCard from "../components/user/UserChatBoxCard";
 import ConversationBox from "../components/chat/ConversationBox";
+import { useDispatch, useSelector } from "react-redux";
+import UserService from "../../services/user/UserService";
+import { fetchConversations } from "../../services/conversation/ConversationSlice";
 
 function ChatPage() {
-  const user = { Id: 1, Name: "SHYAMJITH K", Email: "shyamjithsj@gmail.com" };
+  const dispatch = useDispatch();
+  const userSliceStore = useSelector((state) => state);
+  const conversationSliceStore = useSelector((state) => state);
+  const user = userSliceStore.UserSlice.user;
+  const conversations = conversationSliceStore.ConversationSlice.conversations;
+  const [appUsers, setAppUsers] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  console.log("conv", conversations);
+  console.log("chatpage", selectedConversation);
+  useEffect(() => {
+    const getAllUsers = async () => {
+      const _data = await UserService.allUsers(user.id);
+      setAppUsers(_data);
+    };
+    getAllUsers();
+    dispatch(fetchConversations(user.id));
+  }, []);
+
   return (
     <div className="bg-slate-100 rounded-xl p-2 w-full lg:w-3/4 m-auto">
       <div className="py-1">
@@ -19,21 +39,54 @@ function ChatPage() {
             {/* Conversation List */}
             <div className="overflow-hidden h-[420px]">
               <div className=" h-full overflow-auto">
-                <ConversationItem fullName="Shyam" id="1" key={1} />
-                <ConversationItem fullName="Shyam" id="2" key={2} />
-                <ConversationItem fullName="Shyam" id="3" key={3} />
-                <ConversationItem fullName="Shyam" id="3" key={4} />
-                <ConversationItem fullName="Shyam" id="3" key={5} />
-                <ConversationItem fullName="Shyam" id="3" key={6} />
-                <ConversationItem fullName="Shyam" id="3" key={7} />
-                <ConversationItem fullName="Shyam" id="3" key={8} />
-                <ConversationItem fullName="Shyam" id="3" key={9} />
-                <ConversationItem fullName="Shyam" id="3" key={10} />
-                <ConversationItem fullName="Shyam" id="3" key={11} />
-                <ConversationItem fullName="Shyam" id="3" key={12} />
-                <ConversationItem fullName="Shyam" id="3" key={13} />
-                <ConversationItem fullName="Shyam" id="3" key={14} />
-                <ConversationItem fullName="Shyam" id="3" key={15} />
+                {conversations.length > 0 && (
+                  <div>
+                    <h3 className="mb-3">Recent Chats</h3>
+                    {conversations.map((item, index) => {
+                      console.log("conversation", item);
+                      return (
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setSelectedConversation(item);
+                          }}
+                        >
+                          <ConversationItem reciever={item.reciever} />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <h3 className="mb-3">All Users</h3>
+                <div>
+                  {appUsers &&
+                    appUsers.map((item, index) => {
+                      return (
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setSelectedConversation({
+                              conversationId: null,
+                              chatMessages: [],
+                              lastMessagedOn: null,
+                              reciever: {
+                                id: item.id,
+                                name: item.name,
+                              },
+                            });
+                          }}
+                        >
+                          <ConversationItem
+                            reciever={{
+                              id: item.id,
+                              name: item.name,
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                </div>
               </div>
             </div>
             {/* Conversation List */}
@@ -41,7 +94,16 @@ function ChatPage() {
           {/* Left Side */}
           {/* Right Side */}
           <div className="w-3/5 h-[500px] bg-[url('/chat_bg.jpg')]">
-            <ConversationBox />
+            {selectedConversation != null && (
+              <ConversationBox
+                conversation={
+                  conversations.find(
+                    (c) =>
+                      c.conversationId == selectedConversation.conversationId
+                  ) ?? selectedConversation
+                }
+              />
+            )}
           </div>
           {/* Right Side */}
         </div>

@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import UserServices from "../../services/UserService";
+import UserServices from "../../services/user/UserService";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../services/user/UserSlice";
+import zLocalStorage from "../../services/custom_hooks/useLocalStorage";
 
 function RegisterPage() {
   const [error, setError] = useState("");
@@ -9,16 +12,35 @@ function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-  const onSubmit = (e) => {
+  const dispatch = useDispatch();
+  const [lsEmail, setLsEmail, removeLsEmail] = zLocalStorage("user_email", "");
+  const [lsPassword, setLsPassword, removeLsPassword] = zLocalStorage(
+    "user_password",
+    ""
+  );
+  const onSubmit = async (e) => {
     e.preventDefault();
     if (password != confirmPassword) {
       setError("Passwords are not matching!");
       return;
     }
-    const result = UserServices.register(fullName, email, password);
+    const result = await UserServices.register(fullName, email, password);
     if (result) {
       console.log("Registered");
       console.log(result);
+      // local storage
+      setLsEmail(email);
+      setLsPassword(password);
+
+      // redux store
+      dispatch(
+        loginUser({
+          id: result.id,
+          name: result.name,
+          email: result.email,
+          token: result.token,
+        })
+      );
       navigate("/chat", { replace: true });
     }
     setError("User registration failed!");
